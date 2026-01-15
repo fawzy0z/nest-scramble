@@ -28,22 +28,36 @@ export class NestScrambleModule {
       sourcePath = 'src',
     } = options;
 
+    console.log(`\n${'='.repeat(60)}`);
+    console.log(`🚀 [Nest-Scramble] Initializing Documentation Engine`);
+    console.log(`   Developed by Mohamed Mustafa | MIT License`);
+    console.log(`${'='.repeat(60)}`);
+
     const scanner = new ScannerService();
     const controllers = scanner.scanControllers(sourcePath);
+    
+    console.log(`\n[Nest-Scramble] Generating OpenAPI specification...`);
     const transformer = new OpenApiTransformer(baseUrl);
     const openApiSpec = transformer.transform(controllers, 'NestJS API', '1.0.0', baseUrl);
+    console.log(`[Nest-Scramble] OpenAPI spec generated successfully`);
 
     if (autoExportPostman) {
+      console.log(`[Nest-Scramble] Exporting Postman collection...`);
       const generator = new PostmanCollectionGenerator(baseUrl);
       const collection = generator.generateCollection(controllers);
       require('fs').writeFileSync(postmanOutputPath, JSON.stringify(collection, null, 2));
-      console.log(`[Nest-Scramble] Postman collection exported to ${postmanOutputPath}`);
+      console.log(`[Nest-Scramble] ✓ Postman collection exported to ${postmanOutputPath}`);
     }
 
     const port = baseUrl.split(':').pop() || '3000';
-    console.log(`\n🚀 [Nest-Scramble] Documentation engine initialized`);
-    console.log(`📚 [Nest-Scramble] Docs available at http://localhost:${port}/docs`);
-    console.log(`📄 [Nest-Scramble] OpenAPI JSON at http://localhost:${port}/docs/json\n`);
+    console.log(`\n${'='.repeat(60)}`);
+    console.log(`✅ [Nest-Scramble] Ready!`);
+    console.log(`📚 API Docs available at: http://localhost:${port}/docs`);
+    console.log(`📄 OpenAPI JSON at: http://localhost:${port}/docs-json`);
+    if (enableMock) {
+      console.log(`🎭 Mock endpoints at: http://localhost:${port}/scramble-mock/*`);
+    }
+    console.log(`${'='.repeat(60)}\n`);
 
     return {
       module: NestScrambleModule,

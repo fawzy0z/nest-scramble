@@ -23,15 +23,8 @@ export interface ParameterInfo {
 }
 
 export class ScannerService {
-  private project: Project;
+  private project: Project | null = null;
   private dtoAnalyzer = new DtoAnalyzer();
-
-  constructor() {
-    this.project = new Project({
-      tsConfigFilePath: 'tsconfig.json',
-      skipAddingFilesFromTsConfig: true,
-    });
-  }
 
   /**
    * Scans the source directory for controllers and their methods
@@ -39,32 +32,69 @@ export class ScannerService {
    * @returns Array of ControllerInfo
    */
   scanControllers(sourcePath: string): ControllerInfo[] {
-    const projectRoot = process.cwd();
-    const fullSourcePath = `${projectRoot}/${sourcePath}`;
-    
+    const hostProjectRoot = process.cwd();
+    const fullSourcePath = `${hostProjectRoot}/${sourcePath}`;
+    const tsconfigPath = `${hostProjectRoot}/tsconfig.json`;
+
+    console.log(`[Nest-Scramble] Scanning directory: ${fullSourcePath}`);
+    console.log(`[Nest-Scramble] Using tsconfig: ${tsconfigPath}`);
+
     try {
-      this.project.addSourceFilesAtPaths(`${fullSourcePath}/**/*.ts`);
+      const fs = require('fs');
+      if (!fs.existsSync(tsconfigPath)) {
+        console.warn(`[Nest-Scramble] Warning: tsconfig.json not found at ${tsconfigPath}`);
+        console.warn(`[Nest-Scramble] Creating project without tsconfig...`);
+        this.project = new Project({
+          skipAddingFilesFromTsConfig: true,
+        });
+      } else {
+        this.project = new Project({
+          tsConfigFilePath: tsconfigPath,
+          skipAddingFilesFromTsConfig: true,
+        });
+      }
     } catch (error) {
-      console.warn(`[Nest-Scramble] Warning: Could not add source files from ${fullSourcePath}`);
+      console.warn(`[Nest-Scramble] Error initializing ts-morph project:`, error);
+      this.project = new Project({
+        skipAddingFilesFromTsConfig: true,
+      });
     }
+
+    if (!this.project) {
+      console.error(`[Nest-Scramble] Failed to initialize project scanner`);
+      return [];
+    }
+
+    try {
+      const pattern = `${fullSourcePath}/**/*.ts`;
+      console.log(`[Nest-Scramble] Adding source files with pattern: ${pattern}`);
+      this.project.addSourceFilesAtPaths(pattern);
+    } catch (error) {
+      console.error(`[Nest-Scramble] Error adding source files:`, error);
+      return [];
+    }
+
+    const sourceFiles = this.project.getSourceFiles();
+    console.log(`[Nest-Scramble] Loaded ${sourceFiles.length} TypeScript file(s)`);
 
     const controllers: ControllerInfo[] = [];
 
-    const controllerClasses = this.project.getSourceFiles()
+    const controllerClasses = sourceFiles
       .flatMap(file => file.getClasses())
       .filter(cls => this.hasControllerDecorator(cls));
 
     if (controllerClasses.length === 0) {
       console.warn(`[Nest-Scramble] No controllers found in /${sourcePath}. Please check your sourcePath config.`);
-      console.warn(`[Nest-Scramble] Looking in: ${fullSourcePath}`);
+      console.warn(`[Nest-Scramble] Searched in: ${fullSourcePath}`);
     } else {
-      console.log(`[Nest-Scramble] Found ${controllerClasses.length} controller(s) in /${sourcePath}`);
+      console.log(`[Nest-Scramble] Found ${controllerClasses.length} controller(s)`);
     }
 
     for (const controllerClass of controllerClasses) {
       const controllerInfo = this.extractControllerInfo(controllerClass);
       if (controllerInfo) {
         controllers.push(controllerInfo);
+        console.log(`[Nest-Scramble]   - ${controllerInfo.name} (${controllerInfo.methods.length} endpoint(s))`);
       }
     }
 
