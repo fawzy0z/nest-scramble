@@ -344,19 +344,107 @@ jobs:
           path: openapi.json
 ```
 
-## 🎨 Documentation UI
+## 🎨 Documentation UI - World-Class Design
 
-### Built-in Scalar UI
+### ✨ Futuristic Theme (NEW!)
 
-Nest-Scramble comes with **Scalar UI** built-in via CDN. No additional packages needed!
+Nest-Scramble now features a **bespoke, futuristic dashboard** that rivals high-end SaaS products like Stripe, Vercel, and Linear!
 
-When you visit `http://localhost:3000/docs`, you'll see a beautiful, interactive API documentation interface with:
+**🚀 Key Features:**
+- **Deep Space Dark Mode** - Ultra-premium `#050505` background
+- **Glassmorphism Design** - Backdrop blur effects on all cards
+- **Cyber Gradients** - Cyan-to-purple button animations
+- **Animated Grid Background** - Subtle pulsing effect
+- **Night Owl Code Theme** - Beautiful syntax highlighting
+- **Custom Scrollbar** - Gradient styling throughout
+- **Spotlight Search** - Cmd+K style search experience
+- **Easter Egg Console** - Hidden developer messages ✨
+
+### 🎨 Theme Customization
+
+**Futuristic Theme (Default):**
+```typescript
+NestScrambleModule.forRoot({
+  theme: 'futuristic',           // Modern, dark, glassmorphic
+  primaryColor: '#00f2ff',       // Cyber-Cyan (default)
+  customDomainIcon: '/logo.png', // Your brand favicon
+  apiTitle: 'My Awesome API',
+})
+```
+
+**Classic Theme:**
+```typescript
+NestScrambleModule.forRoot({
+  theme: 'classic',              // Clean, light, professional
+  primaryColor: '#0066cc',       // Corporate blue
+  apiTitle: 'Enterprise API',
+})
+```
+
+**Custom Color Branding:**
+```typescript
+// One line changes the entire UI color scheme!
+NestScrambleModule.forRoot({
+  primaryColor: '#a855f7',       // Electric Purple
+  // or '#10b981' for Emerald Green
+  // or '#f59e0b' for Amber Orange
+  // or any hex color you want!
+})
+```
+
+### 🎭 UI Configuration Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `theme` | `'classic' \| 'futuristic'` | `'futuristic'` | UI theme selection |
+| `primaryColor` | `string` | `'#00f2ff'` | Primary accent color (hex) |
+| `customDomainIcon` | `string` | `''` | Custom favicon URL |
+| `apiTitle` | `string` | Auto-detected | API documentation title |
+| `apiVersion` | `string` | Auto-detected | API version number |
+
+### 🌟 Interactive Features
+
+When you visit `http://localhost:3000/docs`, you'll experience:
 
 - 🎯 **Interactive API Explorer** - Test endpoints directly from the browser
 - 📝 **Auto-generated Examples** - Request/response samples for all endpoints
-- 🔍 **Search Functionality** - Quickly find endpoints
-- 🌙 **Dark Mode Support** - Easy on the eyes
-- 📱 **Mobile Responsive** - Works on all devices
+- 🔍 **Spotlight Search** - Quickly find endpoints with glowing focus states
+- 🌙 **Futuristic Dark Mode** - Deep space theme with glassmorphism
+- 📱 **Mobile Responsive** - Works beautifully on all devices
+- 🎨 **Theme Toggle** - Switch between Futuristic and Classic (top-right button)
+- ✨ **Powered by Badge** - Glowing brand badge with pulse animation
+- 🎭 **Easter Eggs** - Check your browser console for surprises!
+
+### 🖥️ Terminal Dashboard
+
+The startup dashboard now features **gradient styling** with ANSI colors:
+
+```
+╔═══════════════════════════════════════════════════════════════╗
+║  ✨ NEST-SCRAMBLE by Mohamed Mustafa                          ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║                                                               ║
+║  ● Documentation                                              ║
+║    → http://localhost:3000/docs                               ║
+║                                                               ║
+║  ● OpenAPI Spec                                               ║
+║    → http://localhost:3000/docs-json                          ║
+║                                                               ║
+║  ● Mock Server                                                ║
+║    → http://localhost:3000/scramble-mock                      ║
+║                                                               ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  📦 Source Path: src                                          ║
+║  🎯 Controllers: 5                                            ║
+║  🎨 Theme: Futuristic                                         ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+### 📚 More UI Documentation
+
+For complete UI customization guide, see:
+- **[UI_FEATURES.md](./UI_FEATURES.md)** - Comprehensive feature documentation
+- **[examples/futuristic-ui-example.ts](./examples/futuristic-ui-example.ts)** - Usage examples
 
 ### Available Endpoints
 
@@ -609,7 +697,6 @@ If you're still experiencing issues:
 1. **Check the logs** - Nest-Scramble provides detailed diagnostic output on startup
 2. **Verify your version** - Run `npm list nest-scramble` (should be 1.1.0+)
 3. **Open an issue** - [GitHub Issues](https://github.com/Eng-MMustafa/nest-scramble/issues)
-4. **Join discussions** - [GitHub Discussions](https://github.com/Eng-MMustafa/nest-scramble/discussions)
 
 When reporting issues, please include:
 - Nest-Scramble version

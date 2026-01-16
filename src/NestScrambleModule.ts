@@ -17,6 +17,9 @@ export interface NestScrambleOptions {
   sourcePath?: string;
   apiTitle?: string;
   apiVersion?: string;
+  customDomainIcon?: string;
+  primaryColor?: string;
+  theme?: 'classic' | 'futuristic';
 }
 
 @Module({})
@@ -33,17 +36,37 @@ export class NestScrambleModule implements OnModuleInit {
     const options = NestScrambleModule.moduleOptions;
     const projectStructure = AutoDetector.detectProjectStructure();
 
-    console.log('\n┌──────────────────────────────────────────────────────────┐');
-    console.log('│  🚀 Nest-Scramble by Mohamed Mustafa is Active!          │');
-    console.log('├──────────────────────────────────────────────────────────┤');
-    console.log(`│  📖 Docs: http://localhost:${port}/docs${' '.repeat(Math.max(0, 26 - port.toString().length))}│`);
-    console.log(`│  📄 JSON: http://localhost:${port}/docs-json${' '.repeat(Math.max(0, 21 - port.toString().length))}│`);
+    const cyan = '\x1b[36m';
+    const purple = '\x1b[35m';
+    const green = '\x1b[32m';
+    const yellow = '\x1b[33m';
+    const bold = '\x1b[1m';
+    const reset = '\x1b[0m';
+    const dim = '\x1b[2m';
+    const gradient = `${cyan}${bold}`;
+
+    console.log('\n');
+    console.log(`${gradient}╔═══════════════════════════════════════════════════════════════╗${reset}`);
+    console.log(`${gradient}║${reset}  ${cyan}${bold}✨ NEST-SCRAMBLE${reset} ${dim}by Mohamed Mustafa${reset}                      ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}  ${purple}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${reset}  ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}                                                               ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}  ${green}●${reset} ${bold}Documentation${reset}                                           ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}    ${cyan}→${reset} http://localhost:${port}/docs                            ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}                                                               ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}  ${green}●${reset} ${bold}OpenAPI Spec${reset}                                            ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}    ${cyan}→${reset} http://localhost:${port}/docs-json                       ${gradient}║${reset}`);
     if (options.enableMock !== false) {
-      console.log(`│  🎭 Mock: http://localhost:${port}/scramble-mock${' '.repeat(Math.max(0, 16 - port.toString().length))}│`);
+      console.log(`${gradient}║${reset}                                                               ${gradient}║${reset}`);
+      console.log(`${gradient}║${reset}  ${green}●${reset} ${bold}Mock Server${reset}                                             ${gradient}║${reset}`);
+      console.log(`${gradient}║${reset}    ${cyan}→${reset} http://localhost:${port}/scramble-mock                  ${gradient}║${reset}`);
     }
-    console.log(`│  ✨ Scanning: ${projectStructure.sourcePath}${' '.repeat(Math.max(0, 43 - projectStructure.sourcePath.length))}│`);
-    console.log(`│  🎯 Controllers: ${projectStructure.controllerPaths.length}${' '.repeat(Math.max(0, 40 - projectStructure.controllerPaths.length.toString().length))}│`);
-    console.log('└──────────────────────────────────────────────────────────┘\n');
+    console.log(`${gradient}║${reset}                                                               ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}  ${purple}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${reset}  ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}  ${yellow}📦${reset} Source Path: ${dim}${projectStructure.sourcePath}${reset}                     ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}  ${yellow}🎯${reset} Controllers: ${green}${bold}${projectStructure.controllerPaths.length}${reset}                                      ${gradient}║${reset}`);
+    console.log(`${gradient}║${reset}  ${yellow}🎨${reset} Theme: ${options.theme === 'futuristic' ? `${purple}${bold}Futuristic${reset}` : `${dim}Classic${reset}`}                                   ${gradient}║${reset}`);
+    console.log(`${gradient}╚═══════════════════════════════════════════════════════════════╝${reset}`);
+    console.log(`\n  ${dim}Press Ctrl+C to stop the server${reset}\n`);
   }
 
   static forRoot(options: NestScrambleOptions = {}): DynamicModule {
@@ -60,6 +83,9 @@ export class NestScrambleModule implements OnModuleInit {
       sourcePath: options.sourcePath || projectStructure.sourcePath,
       apiTitle: options.apiTitle || AutoDetector.getAppName(),
       apiVersion: options.apiVersion || AutoDetector.getAppVersion(),
+      customDomainIcon: options.customDomainIcon || '',
+      primaryColor: options.primaryColor || '#00f2ff',
+      theme: options.theme || 'futuristic',
     };
 
     // Store for dashboard display
