@@ -5,6 +5,6 @@ export * from './scanner/ScannerService';
 export * from './utils/DtoAnalyzer';
 export * from './utils/MockGenerator';
 export * from './utils/OpenApiTransformer';
+export * from './utils/AutoDetector';
 export * from './middleware/MockMiddleware';
 export * from './controllers/DocsController';
-

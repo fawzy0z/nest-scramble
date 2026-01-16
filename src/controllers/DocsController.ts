@@ -1,7 +1,11 @@
 /** Nest-Scramble | Developed by Mohamed Mustafa | MIT License **/
-import { Controller, Get, Inject, Res } from '@nestjs/common';
+import { Controller, Get, Inject, Res, SetMetadata } from '@nestjs/common';
+
+export const IS_PUBLIC_KEY = 'isPublic';
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 @Controller()
+@Public()
 export class DocsController {
   constructor(
     @Inject('NEST_SCRAMBLE_OPENAPI') private openApiSpec: any,

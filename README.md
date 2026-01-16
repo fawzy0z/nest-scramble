@@ -55,9 +55,31 @@ Nest-Scramble is engineered using cutting-edge static analysis techniques that t
 
 This approach delivers what runtime reflection simply cannot: perfect accuracy, zero overhead, and future-proof compatibility with TypeScript's evolving type system.
 
-## ⚡ Quick Start (3 Steps)
+## ⚡ Quick Start - Zero Config (2 Steps!)
 
-### 1. Install the Package
+### Option A: Auto-Injection (Recommended - 30 seconds!)
+
+```bash
+# 1. Install
+npm install nest-scramble
+
+# 2. Auto-inject into your project
+npx nest-scramble init
+
+# 3. Start your app
+npm run start:dev
+
+# 🎉 Done! Visit http://localhost:3000/docs
+```
+
+The `init` command automatically:
+- ✅ Adds the import statement to your `app.module.ts`
+- ✅ Injects `NestScrambleModule.forRoot()` into your imports
+- ✅ Uses smart defaults with zero configuration needed
+
+### Option B: Manual Installation (3 Steps)
+
+#### 1. Install the Package
 
 ```bash
 # Using npm
@@ -70,32 +92,59 @@ yarn add nest-scramble
 pnpm add nest-scramble
 ```
 
-### 2. Import Module in Your NestJS App
+#### 2. Import Module in Your NestJS App
 
-Open your `app.module.ts` (or main module) and add:
-
+**Zero-Config (Recommended):**
 ```typescript
 import { Module } from '@nestjs/common';
 import { NestScrambleModule } from 'nest-scramble';
 
 @Module({
   imports: [
-    // Your other modules...
+    NestScrambleModule.forRoot(), // 🎯 That's it! Zero config needed
+  ],
+})
+export class AppModule {}
+```
+
+**With Custom Options:**
+```typescript
+import { Module } from '@nestjs/common';
+import { NestScrambleModule } from 'nest-scramble';
+
+@Module({
+  imports: [
     NestScrambleModule.forRoot({
-      sourcePath: 'src',           // Path to your source code
-      baseUrl: 'http://localhost:3000',
-      enableMock: true,            // Enable mock endpoints
-      autoExportPostman: false,    // Auto-generate Postman collection
+      sourcePath: 'src',              // Auto-detected by default
+      baseUrl: 'http://localhost:3000', // Auto-detected from PORT env
+      enableMock: true,               // Enabled by default
+      autoExportPostman: false,       // Disabled by default
+      apiTitle: 'My API',             // Auto-detected from package.json
+      apiVersion: '1.0.0',            // Auto-detected from package.json
     }),
   ],
 })
 export class AppModule {}
 ```
 
-### 3. Start Your App and Visit Documentation
+#### 3. Start Your App and Visit Documentation
 
 ```bash
 npm run start:dev
+```
+
+You'll see a beautiful dashboard in your terminal:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  🚀 Nest-Scramble by Mohamed Mustafa is Active!          │
+├──────────────────────────────────────────────────────────┤
+│  📖 Docs: http://localhost:3000/docs                     │
+│  📄 JSON: http://localhost:3000/docs-json                │
+│  🎭 Mock: http://localhost:3000/scramble-mock            │
+│  ✨ Scanning: src                                        │
+│  🎯 Controllers: 5                                       │
+└──────────────────────────────────────────────────────────┘
 ```
 
 Then open your browser:
@@ -103,9 +152,13 @@ Then open your browser:
 - **📖 Interactive API Docs (Scalar UI)**: http://localhost:3000/docs
 - **📄 OpenAPI JSON Spec**: http://localhost:3000/docs-json
 - **🎭 Mock Endpoints**: http://localhost:3000/scramble-mock/*
-- **📤 Postman Collection**: Auto-generated at `collection.json` (if enabled)
 
-**That's it!** Nest-Scramble will automatically scan your controllers and generate beautiful documentation.
+**That's it!** Nest-Scramble automatically:
+- 🔍 Detects your project structure
+- 📂 Finds your controllers
+- 📝 Generates OpenAPI spec
+- 🎨 Serves beautiful documentation
+- 🎭 Provides mock endpoints
 
 ## ⚙️ Configuration Options
 
@@ -177,26 +230,119 @@ GET /scramble-mock/users/123
 ## 🔧 Advanced Usage
 
 ### CLI Generation
+
+The Nest-Scramble CLI allows you to generate API documentation without running your NestJS application.
+
+#### Generate OpenAPI Specification
+
 ```bash
-pnpm dlx nest-scramble generate src --output my-api.json
+# Using npx
+npx nest-scramble generate src
+
+# Using pnpm dlx
+pnpm dlx nest-scramble generate src
+
+# Using yarn dlx
+yarn dlx nest-scramble generate src
+```
+
+#### CLI Options
+
+```bash
+nest-scramble generate <sourcePath> [options]
+
+Options:
+  -o, --output <file>         Output file path (default: "openapi.json")
+  -f, --format <type>         Output format: openapi or postman (default: "openapi")
+  -b, --baseUrl <url>         Base URL for the API (default: "http://localhost:3000")
+  -t, --title <title>         API title (default: "NestJS API")
+  -v, --apiVersion <version>  API version (default: "1.0.0")
+  -h, --help                  Display help for command
+```
+
+#### Examples
+
+**Generate OpenAPI JSON:**
+```bash
+pnpm dlx nest-scramble generate src --output openapi.json
+```
+
+**Generate Postman Collection:**
+```bash
+pnpm dlx nest-scramble generate src --format postman --output collection.json
+```
+
+**Custom API Details:**
+```bash
+pnpm dlx nest-scramble generate src \
+  --output my-api.json \
+  --title "My Awesome API" \
+  --apiVersion "2.0.0" \
+  --baseUrl "https://api.example.com"
+```
+
+**Check Version:**
+```bash
+pnpm dlx nest-scramble --version
 ```
 
 ### Programmatic API
-```typescript
-import { ScannerService, OpenApiTransformer } from 'nest-scramble';
 
+Use Nest-Scramble programmatically in your Node.js scripts:
+
+```typescript
+import { ScannerService, OpenApiTransformer, PostmanCollectionGenerator } from 'nest-scramble';
+import * as fs from 'fs';
+
+// Scan controllers
 const scanner = new ScannerService();
 const controllers = scanner.scanControllers('src');
 
-const transformer = new OpenApiTransformer();
-const spec = transformer.transform(controllers);
+// Generate OpenAPI spec
+const transformer = new OpenApiTransformer('http://localhost:3000');
+const openApiSpec = transformer.transform(
+  controllers,
+  'My API',
+  '1.0.0',
+  'http://localhost:3000'
+);
+
+// Save to file
+fs.writeFileSync('openapi.json', JSON.stringify(openApiSpec, null, 2));
+
+// Or generate Postman collection
+const postmanGen = new PostmanCollectionGenerator('http://localhost:3000');
+const collection = postmanGen.generateCollection(controllers);
+fs.writeFileSync('collection.json', JSON.stringify(collection, null, 2));
 ```
 
-### Watch Mode
-```bash
-pnpm run watch-generate
+### CI/CD Integration
+
+Add to your CI/CD pipeline to auto-generate documentation:
+
+```yaml
+# .github/workflows/docs.yml
+name: Generate API Docs
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: npx nest-scramble generate src --output openapi.json
+      - uses: actions/upload-artifact@v3
+        with:
+          name: api-docs
+          path: openapi.json
 ```
-Automatically regenerates docs on file changes.
 
 ## 🎨 Documentation UI
 
@@ -335,7 +481,73 @@ npm install
 npm run build
 ```
 
-#### 4. **pnpm Dependency Conflicts**
+#### 4. **"Unauthorized" (401) Error on /docs Endpoint**
+
+If you have a Global AuthGuard and get 401 Unauthorized when accessing `/docs` or `/docs-json`:
+
+**Solution:**
+
+Nest-Scramble automatically marks its documentation endpoints as public using `@SetMetadata('isPublic', true)`. However, your AuthGuard needs to respect this metadata.
+
+Update your AuthGuard to check for the `isPublic` metadata:
+
+```typescript
+import { Injectable, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(private reflector: Reflector) {
+    super();
+  }
+
+  canActivate(context: ExecutionContext) {
+    // Check if route is marked as public
+    const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    
+    if (isPublic) {
+      return true; // Allow access to public routes
+    }
+    
+    return super.canActivate(context);
+  }
+}
+```
+
+**Alternative Solution - Exclude /docs path:**
+
+```typescript
+import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
+})
+export class AppModule {}
+
+// In your AuthGuard:
+canActivate(context: ExecutionContext) {
+  const request = context.switchToHttp().getRequest();
+  
+  // Skip authentication for documentation endpoints
+  if (request.url.startsWith('/docs')) {
+    return true;
+  }
+  
+  return super.canActivate(context);
+}
+```
+
+#### 5. **pnpm Dependency Conflicts**
 
 If using pnpm and getting peer dependency warnings:
 
@@ -345,7 +557,7 @@ Nest-Scramble v1.1.0+ properly declares peer dependencies. Update to the latest 
 pnpm update nest-scramble
 ```
 
-#### 5. **Controllers Not Being Scanned**
+#### 6. **Controllers Not Being Scanned**
 
 The scanner looks in your **host project's** `src` folder, not the library's folder.
 
@@ -360,7 +572,7 @@ The scanner looks in your **host project's** `src` folder, not the library's fol
 
 3. Verify your `tsconfig.json` exists in the project root
 
-#### 6. **Mock Endpoints Not Working**
+#### 7. **Mock Endpoints Not Working**
 
 If `/scramble-mock/*` returns 404:
 
@@ -369,7 +581,7 @@ If `/scramble-mock/*` returns 404:
 - The middleware applies to all routes matching `/scramble-mock/*`
 - Example: `http://localhost:3000/scramble-mock/users/123`
 
-#### 7. **OpenAPI Spec is Empty or Incomplete**
+#### 8. **OpenAPI Spec is Empty or Incomplete**
 
 **Solution:**
 - Ensure your DTOs are TypeScript classes or interfaces (not plain objects)
