@@ -348,13 +348,13 @@ jobs:
 
 ### ✨ Elite Dashboard Design (NEW!)
 
-Nest-Scramble features a **professional, high-end API dashboard** inspired by Stripe and Postman, where each request is displayed on a separate page for focused documentation!
+Nest-Scramble features a **professional, high-end API dashboard** inspired by Stripe and Postman, with refined typography and a polished dark palette for long reading sessions.
 
 **🚀 Key Features:**
 - **Sidebar-Only Navigation** - Fixed 320px sidebar with controller grouping
 - **Single-Request Per Page** - Each endpoint gets its own dedicated view
 - **Three-Column Elite Layout** - Information | Request Editor | Test Panel
-- **Deep Black Background** - Professional `#000000` and `#0B0E14` theme
+- **Soft Dark Background** - Refined deep blues for a premium, eye-friendly dark mode
 - **Cyber-Cyan Accents** - `#00f2ff` for active states and primary actions
 - **Vibrant HTTP Method Badges** - Color-coded with glow effects:
   - GET = Royal Blue (`#3B82F6`)
@@ -367,7 +367,8 @@ Nest-Scramble features a **professional, high-end API dashboard** inspired by St
 - **Terminal-Style Response** - Black box with green text for API responses
 - **High-Contrast Labels** - Required, Type, and Default badges
 - **Custom Scrollbars** - Gradient cyan-to-purple styling
-- **Plus Jakarta Sans Typography** - Modern, professional font family
+- **Plus Jakarta Sans Typography** - Modern, professional font family with optimized sizing
+- **Clear Sidebar Text** - Slightly larger nav fonts for effortless scanning
 - **Powered by Badge** - Animated branding with pulse effect
 
 ### 📐 Three-Column Elite Interface
